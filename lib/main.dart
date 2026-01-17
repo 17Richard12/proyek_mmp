@@ -13,6 +13,7 @@ import 'firebase_options.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +21,8 @@ void main() async {
   if (kIsWeb) {
     databaseFactory = databaseFactoryFfiWeb;
   }
+
+  await initializeDateFormatting('id_ID', null);
 
   // Initialize Firebase (Mocked here since no google-services.json)
   await Firebase.initializeApp(

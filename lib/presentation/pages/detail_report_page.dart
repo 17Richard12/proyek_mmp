@@ -2,11 +2,41 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:city_care/domain/entities/report.dart';
 import 'package:intl/intl.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'dart:async';
 
-class DetailReportPage extends StatelessWidget {
+class DetailReportPage extends StatefulWidget {
   final Report report;
 
   const DetailReportPage({super.key, required this.report});
+
+  @override
+  State<DetailReportPage> createState() => _DetailReportPageState();
+}
+
+class _DetailReportPageState extends State<DetailReportPage> {
+  GoogleMapController? _mapController;
+  final Completer<GoogleMapController> _controller = Completer();
+
+  @override
+  void dispose() {
+    _mapController?.dispose();
+    super.dispose();
+  }
+
+  Set<Marker> _createMarkers() {
+    return {
+      Marker(
+        markerId: const MarkerId('report_location'),
+        position: LatLng(widget.report.latitude, widget.report.longitude),
+        infoWindow: InfoWindow(
+          title: widget.report.title,
+          snippet: 'Lokasi Laporan',
+        ),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+      ),
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +69,12 @@ class DetailReportPage extends StatelessWidget {
                       const SizedBox(height: 24),
 
                       // AI Suggestion Section
-                      if (report.aiSuggestion != null) ...[
+                      if (widget.report.aiSuggestion != null) ...[
                         _buildAISuggestionSection(),
                         const SizedBox(height: 24),
                       ],
 
-                      // Location Section
+                      // Location Section with Map
                       _buildLocationSection(context),
                       const SizedBox(height: 24),
 
@@ -53,7 +83,7 @@ class DetailReportPage extends StatelessWidget {
                       const SizedBox(height: 32),
 
                       // Action Buttons
-                      if (!report.isDraft) _buildActionButtons(context),
+                      if (!widget.report.isDraft) _buildActionButtons(context),
                       const SizedBox(height: 16),
                     ],
                   ),
@@ -104,7 +134,9 @@ class DetailReportPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Icon(
-                          report.isDraft ? Icons.drafts : Icons.report_problem,
+                          widget.report.isDraft
+                              ? Icons.drafts
+                              : Icons.report_problem,
                           color: Colors.white,
                           size: 20,
                         ),
@@ -112,7 +144,9 @@ class DetailReportPage extends StatelessWidget {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          report.isDraft ? 'Draft Lokal' : 'Laporan Publik',
+                          widget.report.isDraft
+                              ? 'Draft Lokal'
+                              : 'Laporan Publik',
                           style: TextStyle(
                             color: Colors.white.withOpacity(0.9),
                             fontSize: 13,
@@ -169,9 +203,9 @@ class DetailReportPage extends StatelessWidget {
   }
 
   Widget _buildStatusCard() {
-    Color statusColor = _getStatusColor(report.status);
-    IconData statusIcon = _getStatusIcon(report.status);
-    String statusText = _getStatusText(report.status);
+    Color statusColor = _getStatusColor(widget.report.status);
+    IconData statusIcon = _getStatusIcon(widget.report.status);
+    String statusText = _getStatusText(widget.report.status);
 
     return Container(
       margin: const EdgeInsets.all(16),
@@ -220,7 +254,7 @@ class DetailReportPage extends StatelessWidget {
               ],
             ),
           ),
-          if (!report.isDraft)
+          if (!widget.report.isDraft)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
@@ -228,7 +262,7 @@ class DetailReportPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                report.status.toUpperCase(),
+                widget.report.status.toUpperCase(),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 11,
@@ -274,7 +308,7 @@ class DetailReportPage extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            report.title,
+            widget.report.title,
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
@@ -320,7 +354,7 @@ class DetailReportPage extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            report.description,
+            widget.report.description,
             style: TextStyle(
               fontSize: 15,
               color: Colors.grey[800],
@@ -386,7 +420,7 @@ class DetailReportPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
-              report.aiSuggestion!,
+              widget.report.aiSuggestion!,
               style: TextStyle(
                 fontSize: 14,
                 fontStyle: FontStyle.italic,
@@ -432,6 +466,36 @@ class DetailReportPage extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
+
+          // Google Map
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: SizedBox(
+              height: 250,
+              child: GoogleMap(
+                initialCameraPosition: CameraPosition(
+                  target:
+                      LatLng(widget.report.latitude, widget.report.longitude),
+                  zoom: 16,
+                ),
+                markers: _createMarkers(),
+                myLocationButtonEnabled: true,
+                myLocationEnabled: true,
+                zoomControlsEnabled: true,
+                mapToolbarEnabled: false,
+                onMapCreated: (GoogleMapController controller) {
+                  if (!_controller.isCompleted) {
+                    _controller.complete(controller);
+                    _mapController = controller;
+                  }
+                },
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Coordinates Info
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -444,38 +508,57 @@ class DetailReportPage extends StatelessWidget {
                 _buildLocationRow(
                   Icons.location_searching,
                   'Latitude',
-                  report.latitude.toStringAsFixed(6),
+                  widget.report.latitude.toStringAsFixed(6),
                   context,
                 ),
                 const Divider(height: 24),
                 _buildLocationRow(
                   Icons.explore,
                   'Longitude',
-                  report.longitude.toStringAsFixed(6),
+                  widget.report.longitude.toStringAsFixed(6),
                   context,
                 ),
               ],
             ),
           ),
+
           const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: () {
-                // Open in maps
-                _openInMaps(context);
-              },
-              icon: const Icon(Icons.map),
-              label: const Text('Buka di Peta'),
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                side: BorderSide(color: Colors.blue[700]!),
-                foregroundColor: Colors.blue[700],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+
+          // Action Buttons
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => _openInGoogleMaps(context),
+                  icon: const Icon(Icons.map, size: 20),
+                  label: const Text('Google Maps'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    side: BorderSide(color: Colors.blue[700]!),
+                    foregroundColor: Colors.blue[700],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                 ),
               ),
-            ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => _getDirections(context),
+                  icon: const Icon(Icons.directions, size: 20),
+                  label: const Text('Arah'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    side: BorderSide(color: Colors.green[700]!),
+                    foregroundColor: Colors.green[700],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -575,21 +658,21 @@ class DetailReportPage extends StatelessWidget {
           _buildMetadataRow(
             Icons.calendar_today,
             'Tanggal Dibuat',
-            _formatDate(report.createdAt),
+            _formatDate(widget.report.createdAt),
           ),
           const Divider(height: 24),
           _buildMetadataRow(
             Icons.access_time,
             'Waktu',
-            _formatTime(report.createdAt),
+            _formatTime(widget.report.createdAt),
           ),
           const Divider(height: 24),
           _buildMetadataRow(
             Icons.fingerprint,
             'ID Laporan',
-            report.id.substring(0, 8),
+            widget.report.id.substring(0, 8),
           ),
-          if (report.isDraft) ...[
+          if (widget.report.isDraft) ...[
             const Divider(height: 24),
             _buildMetadataRow(
               Icons.storage,
@@ -774,6 +857,52 @@ class DetailReportPage extends StatelessWidget {
             Icon(Icons.map, color: Colors.white, size: 18),
             SizedBox(width: 8),
             Text('Membuka peta...'),
+          ],
+        ),
+        backgroundColor: Colors.blue[700],
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+    );
+  }
+
+  void _openInGoogleMaps(BuildContext context) {
+    // URL untuk membuka Google Maps dengan koordinat
+    final url =
+        'https://www.google.com/maps/search/?api=1&query=${widget.report.latitude},${widget.report.longitude}';
+    // Untuk implementasi lengkap, gunakan package url_launcher
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Row(
+          children: [
+            Icon(Icons.map, color: Colors.white, size: 18),
+            SizedBox(width: 8),
+            Text('Membuka Google Maps...'),
+          ],
+        ),
+        backgroundColor: Colors.green[700],
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+    );
+  }
+
+  void _getDirections(BuildContext context) {
+    // URL untuk mendapatkan arah di Google Maps
+    // final url = 'https://www.google.com/maps/dir/?api=1&destination=${widget.report.latitude},${widget.report.longitude}';
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Row(
+          children: [
+            Icon(Icons.directions, color: Colors.white, size: 18),
+            SizedBox(width: 8),
+            Text('Mendapatkan arah...'),
           ],
         ),
         backgroundColor: Colors.blue[700],

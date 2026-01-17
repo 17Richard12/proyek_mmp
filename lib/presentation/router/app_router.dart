@@ -24,6 +24,11 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/detail',
       builder: (context, state) {
+        // [PERBAIKAN] Cek apakah ada data report
+        if (state.extra == null || state.extra is! Report) {
+          return const HomePage(); // Redirect jika data kosong
+        }
+        // Jika aman, baru kita cast
         final report = state.extra as Report;
         return DetailReportPage(report: report);
       },

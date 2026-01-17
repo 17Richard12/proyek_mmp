@@ -6,7 +6,7 @@ class GeminiService {
   late final GenerativeModel _model;
 
   GeminiService() {
-    _model = GenerativeModel(model: 'gemini-2.5-pro', apiKey: _apiKey);
+    _model = GenerativeModel(model: 'gemini-1.5-flash', apiKey: _apiKey);
   }
 
   Future<String> getSuggestion(String description) async {
