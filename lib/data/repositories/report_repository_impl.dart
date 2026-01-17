@@ -61,8 +61,25 @@ class ReportRepositoryImpl implements ReportRepository {
   Future<void> syncDrafts() async {
     final drafts = await databaseHelper.getDrafts();
     for (var draft in drafts) {
-      // Logic to sync drafts to cloud automatically if needed
-      // For now, we just leave them as drafts until user explicitly uploads
+      try {
+        // PERBAIKAN: Buat instance ReportModel baru secara manual
+        final reportToUpload = ReportModel(
+          id: draft.id,
+          title: draft.title,
+          description: draft.description,
+          latitude: draft.latitude,
+          longitude: draft.longitude,
+          status: draft.status,
+          isDraft: false, // Set isDraft menjadi false di sini
+          aiSuggestion: draft.aiSuggestion,
+          createdAt: draft.createdAt,
+        );
+
+        await firebaseService.saveReport(reportToUpload);
+        await databaseHelper.deleteDraft(draft.id);
+      } catch (e) {
+        // Handle error jika gagal upload
+      }
     }
   }
 

@@ -9,12 +9,22 @@ import 'package:city_care/data/datasources/firebase_service.dart';
 import 'package:city_care/data/datasources/gemini_service.dart';
 import 'package:city_care/data/datasources/location_service.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:flutter/foundation.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  if (kIsWeb) {
+    databaseFactory = databaseFactoryFfiWeb;
+  }
+
   // Initialize Firebase (Mocked here since no google-services.json)
-  // await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   final databaseHelper = DatabaseHelper();
   final firebaseService = FirebaseService();
