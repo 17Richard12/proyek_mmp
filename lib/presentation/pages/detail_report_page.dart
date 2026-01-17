@@ -144,9 +144,7 @@ class _DetailReportPageState extends State<DetailReportPage> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          widget.report.isDraft
-                              ? 'Draft Lokal'
-                              : 'Laporan Publik',
+                          widget.report.isDraft ? '' : 'Laporan Publik',
                           style: TextStyle(
                             color: Colors.white.withOpacity(0.9),
                             fontSize: 13,
