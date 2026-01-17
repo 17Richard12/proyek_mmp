@@ -21,20 +21,14 @@ class DefaultFirebaseOptions {
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for android - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return android;
       case TargetPlatform.iOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for ios - '
           'you can reconfigure this by running the FlutterFire CLI again.',
         );
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -61,4 +55,22 @@ class DefaultFirebaseOptions {
     storageBucket: 'proyekmmp-58353.firebasestorage.app',
     measurementId: 'G-DB440Y8NY1',
   );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyAgsuyy_PHo7fGictIqOKChVOVzNEHRNBs',
+    appId: '1:910249466722:ios:78dee3fefd1372dad0aa3b',
+    messagingSenderId: '910249466722',
+    projectId: 'proyekmmp-58353',
+    storageBucket: 'proyekmmp-58353.firebasestorage.app',
+    iosBundleId: 'com.example.cityCare',
+  );
+
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyDnvdXoHe3BcnvOKHGAfI1FCuEocDqb2NQ',
+    appId: '1:910249466722:android:117259f1fb826472d0aa3b',
+    messagingSenderId: '910249466722',
+    projectId: 'proyekmmp-58353',
+    storageBucket: 'proyekmmp-58353.firebasestorage.app',
+  );
+
 }

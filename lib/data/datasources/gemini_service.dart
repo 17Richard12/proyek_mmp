@@ -2,7 +2,7 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 
 class GeminiService {
   // NOTE: In a real app, do not store API keys directly in the code. Use environment variables.
-  static const String _apiKey = "AIzaSyAyNMK4C9I73REVJsPLVI_FqBM1OTmKZ0c";
+  static const String _apiKey = "AIzaSyC32mw2Oo8KqcYNFVwnmgGZc1F46cYfEXk";
   late final GenerativeModel _model;
 
   GeminiService() {

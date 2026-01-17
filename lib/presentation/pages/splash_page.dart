@@ -85,13 +85,16 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
 
     // Start animations sequentially
     _startAnimations();
+    _navigateAfterAnimation();
+  }
 
-    // Navigate after delay
-    Future.delayed(const Duration(milliseconds: 3000), () {
-      if (mounted) {
-        context.go('/home');
-      }
-    });
+  void _navigateAfterAnimation() async {
+    // Tunggu animasi intro selesai (misal total durasi animasi terpanjang Anda)
+    await Future.delayed(const Duration(milliseconds: 2000));
+
+    if (mounted) {
+      context.go('/home');
+    }
   }
 
   void _startAnimations() async {

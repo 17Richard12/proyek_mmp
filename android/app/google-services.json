@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "910249466722",
+    "project_id": "proyekmmp-58353",
+    "storage_bucket": "proyekmmp-58353.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:910249466722:android:117259f1fb826472d0aa3b",
+        "android_client_info": {
+          "package_name": "com.example.city_care"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnvdXoHe3BcnvOKHGAfI1FCuEocDqb2NQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -9,7 +9,15 @@ class FirebaseService {
   }
 
   Future<List<ReportModel>> getReports() async {
-    final snapshot = await _firestore.collection('reports').orderBy('createdAt', descending: true).get();
-    return snapshot.docs.map((doc) => ReportModel.fromJson(doc.data())).toList();
+    // Tambahkan .limit(20)
+    final snapshot = await _firestore
+        .collection('reports')
+        .orderBy('createdAt', descending: true)
+        .limit(20)
+        .get();
+
+    return snapshot.docs
+        .map((doc) => ReportModel.fromJson(doc.data()))
+        .toList();
   }
 }

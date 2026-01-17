@@ -1,3 +1,4 @@
+import 'package:city_care/presentation/bloc/report/report_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:city_care/presentation/router/app_router.dart';
@@ -53,7 +54,10 @@ class CityCareApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => ReportBloc(repository)),
+        BlocProvider(
+          create: (_) =>
+              ReportBloc(repository)..add(LoadReports()), // Tambahkan ini!
+        ),
         BlocProvider(create: (_) => FormBloc(repository)),
       ],
       child: MaterialApp.router(

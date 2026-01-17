@@ -10,7 +10,8 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
     on<LoadReports>(_onLoadReports);
   }
 
-  Future<void> _onLoadReports(LoadReports event, Emitter<ReportState> emit) async {
+  Future<void> _onLoadReports(
+      LoadReports event, Emitter<ReportState> emit) async {
     emit(ReportLoading());
     try {
       final reports = await repository.getReports();
