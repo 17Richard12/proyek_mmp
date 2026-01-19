@@ -26,6 +26,7 @@ void main() async {
   await initializeDateFormatting('id_ID', null);
 
   // Initialize Firebase (Mocked here since no google-services.json)
+  // [Auth Setup] Ensure this is called before using any Firebase services
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

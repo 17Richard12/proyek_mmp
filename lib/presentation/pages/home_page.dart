@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:city_care/presentation/bloc/report/report_bloc.dart';
 import 'package:city_care/presentation/bloc/report/report_event.dart';
 import 'package:city_care/presentation/bloc/report/report_state.dart';
+import 'package:city_care/data/services/auth_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -52,6 +53,19 @@ class _HomePageState extends State<HomePage> {
               child: const Icon(Icons.person),
             ),
             onPressed: () => context.push('/profile'),
+          ),
+          IconButton(
+            icon: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.logout),
+            ),
+            onPressed: () async {
+              await AuthService().signOut();
+            },
           ),
           const SizedBox(width: 8),
         ],

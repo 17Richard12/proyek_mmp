@@ -5,13 +5,24 @@ import 'package:city_care/presentation/pages/home_page.dart';
 import 'package:city_care/presentation/pages/create_report_page.dart';
 import 'package:city_care/presentation/pages/detail_report_page.dart';
 import 'package:city_care/presentation/pages/profile_page.dart';
+import 'package:city_care/presentation/pages/auth/auth_gate.dart';
+import 'package:city_care/presentation/pages/auth/login_screen.dart';
+import 'package:city_care/presentation/pages/auth/register_screen.dart';
 import 'package:city_care/domain/entities/report.dart';
 
 final GoRouter router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => const SplashPage(),
+      builder: (context, state) => const AuthGate(),
+    ),
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: '/register',
+      builder: (context, state) => const RegisterScreen(),
     ),
     GoRoute(
       path: '/home',
